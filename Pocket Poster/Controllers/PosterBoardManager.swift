@@ -41,7 +41,7 @@ class PosterBoardManager: ObservableObject {
         }
         
         if let success = langManager.perform(Selector(("setLanguage:")), with: new_lang) {
-            return success != nil
+            return success.takeUnretainedValue() != nil
         }
         
         return false
@@ -52,7 +52,7 @@ class PosterBoardManager: ObservableObject {
         let workspace = obj.perform(Selector(("defaultWorkspace")))?.takeUnretainedValue() as? NSObject
         
         if let success = workspace?.perform(Selector(("openApplicationWithBundleID:")), with: "com.apple.PosterBoard") {
-            return success != nil
+            return success.takeUnretainedValue() != nil
         }
         
         return false
@@ -70,7 +70,7 @@ class PosterBoardManager: ObservableObject {
         if !FileManager.default.fileExists(atPath: path.path()) {
             try? FileManager.default.createDirectory(at: path, withIntermediateDirectories: true)
         }
-        let url = path.appending(path: fileName)
+        let zipFileURL = path.appending(path: fileName)
 
         // Remove All files in this directory
         let existingFiles = try FileManager.default.contentsOfDirectory(at: path, includingPropertiesForKeys: nil, options: .skipsHiddenFiles)
@@ -88,7 +88,7 @@ class PosterBoardManager: ObservableObject {
         if FileManager.default.fileExists(atPath: url.path())
         {
             destinationURL.append(path: "directory")
-            try fileManager.unzipItem(at: url, to: destinationURL)
+            try fileManager.unzipItem(at: zipFileURL, to: destinationURL)
         }
 
         return destinationURL
